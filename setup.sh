@@ -1,0 +1,1 @@
+cp -r src/Data/BrickadiaMining-Structures ../../data/Saved/Builds/BrickadiaMining-Structures

@@ -1,0 +1,23 @@
+{
+  "name": "Brickadia-Mining",
+  "description": "A typed safe Omegga plugin.",
+  "author": "Critical Floof",
+  "config": {
+    "authorized-role": {
+      "description": "The role that has access to trusted commands.",
+      "default": "Admin",
+      "type": "role"
+    },
+    "autosave-interval": {
+      "description": "The rate which gameData is saved and stored (in minutes). useful for data loss prevention.",
+      "default": 5,
+      "type": "number"
+    },
+    "clear-gamedata": {
+      "description": "!!!DANGEROUS!!! Resets all gamedata upon restart, used for testing purposes. Enabling this option will make a lot of players angry in a live session.",
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "commands": []
+}

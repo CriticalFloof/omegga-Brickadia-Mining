@@ -1,0 +1,19 @@
+{
+    "basicPickaxe":{
+        "name":"Basic Pickaxe",
+        "type":"toolPickaxe",
+        "mineMethod":"rectangular",
+        "damage":1,
+        "effectSize":0,
+        "level":1,
+        "maxLevel":50
+    },"basicHandDrill":{
+        "name":"Basic Hand Drill",
+        "type":"toolPickaxe",
+        "mineMethod":"rectangular",
+        "damage":2,
+        "effectSize":0,
+        "level":1,
+        "maxLevel":100
+    }
+}

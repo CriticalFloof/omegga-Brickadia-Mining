@@ -1,0 +1,18 @@
+{
+    "tools":{
+
+    },
+    "placeables":{
+        
+    },
+    "mineables":{
+        "Dirt":"1",
+        "Iron":"%baseHealth%",
+        "Tin":"%baseHealth%",
+        "Pyrite":"%baseHealth%",
+        "Malachite":"%baseHealth%",
+        "Copper":"%baseHealth%",
+        "Gold":"%baseHealth%",
+        "Diamond":"%baseHealth%"
+    }
+}

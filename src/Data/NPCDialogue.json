@@ -1,0 +1,21 @@
+{
+    "Minerals Expert":{
+        "greet":{
+            "t":["Hello, %player%, what would you like?", "%options%"],
+            "option1":"shop",
+            "option2":"quests"
+        },
+        "back":{
+            "t":["What else do you need?", "%options%"],
+            "option1":"shop",
+            "option2":"quests"
+        },
+        "shop":{
+            "t":["Have a look at my inventory. %shop_UI()%"]
+        },
+        "quests":{
+            "t":["I might have some quests for you. %quest_UI()%"]
+        }
+
+    }
+}

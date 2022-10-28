@@ -1,0 +1,16 @@
+{
+    "Minerals Expert":{
+        "buyPriceMultiplier":5,
+        "fee":0.20,
+        "inventory":{
+            "mineables":{
+                "bCanBuy":false,
+                "bCanSell":true
+            },
+            "Dirt":{
+                "bCanBuy":true,
+                "bCanSell":true
+            }
+        }
+    }
+}
