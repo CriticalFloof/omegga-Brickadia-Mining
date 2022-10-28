@@ -11,7 +11,7 @@ Your plugin will be installed via omegga install gh:Critical Floof/Brickadia-Min
 
 # Brickadia-Mining
 
-A 20 person game mode for Brickadia using [omegga](https://github.com/brickadia-community/omegga).
+A fully custom game mode for Brickadia built with typescript using [omegga](https://github.com/brickadia-community/omegga).
 
 ## Install
 
