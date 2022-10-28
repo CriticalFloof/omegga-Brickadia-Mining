@@ -15,7 +15,7 @@ A 20 person game mode for Brickadia using [omegga](https://github.com/brickadia-
 
 ## Install
 
-`omegga install gh:Critical Floof/Brickadia-Mining`
+`omegga install gh:CriticalFloof/Brickadia-Mining`
 
 ## Usage
 
