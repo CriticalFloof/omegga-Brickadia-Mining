@@ -141,7 +141,8 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
         const surfaceNoise = createNoise3D(()=>{return seed});
         loadedNoiseFunctions[SurfacesKeys[i]] = surfaceNoise
       }
-      
+      //Loading environment
+      Omegga.loadEnvironment('Brickadia-Mining-Plate');
       //Loading Map Procedure
       Omegga.clearAllBricks()
       Omegga.loadBricks('BrickadiaMining-Structures/SpawnZoneNauvis', {quiet:false})
