@@ -21,10 +21,10 @@ A 20 person game mode for Brickadia using [omegga](https://github.com/brickadia-
 
 Be sure to disable the following settings for your server via the Omegga Web UI:
 
-Reload Players
-Reload Bricks
-Reload Minigames
-Reload Environment
+- Reload Players
+- Reload Bricks
+- Reload Minigames
+- Reload Environment
 
 All this this behavior is handled by the game mode on restart, so having any of these options on may cause conflict.
 
