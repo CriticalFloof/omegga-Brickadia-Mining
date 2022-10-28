@@ -30,4 +30,5 @@ All this this behavior is handled by the game mode on restart, so having any of 
 
 When running this game mode, It's advised to disable autosaving as it's not going to be useful.
 
-It's reccomended to disable multi-client for balancing reasons, however it's not nessesary.
+It's very reccomended to disable multi-client to avoid possible conflict. 
+The plugin currently identifies players by name and can't differentiate 2 pawns with the same name.
