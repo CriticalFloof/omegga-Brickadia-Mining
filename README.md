@@ -31,3 +31,18 @@ All this this behavior is handled by the game mode on restart, so having any of 
 When running this game mode, It's advised to disable autosaving as it's not going to be useful.
 
 It's very reccomended to disable multi-client to avoid possible conflict. The plugin currently identifies players by name and can't differentiate 2 pawns with the same name.
+
+## Commands
+
+'start-mining','stop-mining', - Starts/Stops the game
+'inventory','i', -View your inventory
+'balance','bal', -View your balance
+'equip', -Equip an item in your inventory
+'enable-dev-mode', -Allows you to bypass block health.
+'option', -Used to navigate npc dialouge
+'exit', -Exits npc dialouge, shop UI, quests UI, etc.
+'buy', -Lets you buy from a shop
+'sell', -Lets you sell to a shop
+'upgrade', -Allows you to upgrade the item you have equipped
+'viewquest', -Shows your quests in chat
+'cancelquest' -Cancels a quest based from a number corresponding to the position on your viewquest list.
