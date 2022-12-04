@@ -21,10 +21,10 @@ A fully custom game mode for Brickadia built with typescript using [omegga](http
 
 Be sure to disable the following settings for your server via the Omegga Web UI:
 
-Reload Players
-Reload Bricks
-Reload Minigames
-Reload Environment
+* Reload Players
+* Reload Bricks
+* Reload Minigames
+* Reload Environment
 
 All this this behavior is handled by the game mode on restart, so having any of these options on may cause conflict.
 
@@ -34,15 +34,15 @@ It's very reccomended to disable multi-client to avoid possible conflict. The pl
 
 ## Commands
 
-'start-mining','stop-mining', - Starts/Stops the game
-'inventory','i', -View your inventory
-'balance','bal', -View your balance
-'equip', -Equip an item in your inventory
-'enable-dev-mode', -Allows you to bypass block health.
-'option', -Used to navigate npc dialouge
-'exit', -Exits npc dialouge, shop UI, quests UI, etc.
-'buy', -Lets you buy from a shop
-'sell', -Lets you sell to a shop
-'upgrade', -Allows you to upgrade the item you have equipped
-'viewquest', -Shows your quests in chat
-'cancelquest' -Cancels a quest based from a number corresponding to the position on your viewquest list.
+* 'start-mining','stop-mining', - Starts/Stops the game
+* 'inventory','i', -View your inventory
+* 'balance','bal', -View your balance
+* 'equip', -Equip an item in your inventory
+* 'enable-dev-mode', -Allows you to bypass block health.
+* 'option', -Used to navigate npc dialouge
+* 'exit', -Exits npc dialouge, shop UI, quests UI, etc.
+* 'buy', -Lets you buy from a shop
+* 'sell', -Lets you sell to a shop
+* 'upgrade', -Allows you to upgrade the item you have equipped
+* 'viewquest', -Shows your quests in chat
+* 'cancelquest' -Cancels a quest based from a number corresponding to the position on your viewquest list.
