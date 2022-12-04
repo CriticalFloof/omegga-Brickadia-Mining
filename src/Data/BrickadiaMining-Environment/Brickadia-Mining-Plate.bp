@@ -20,24 +20,24 @@
 					"b": 0.76815098524093628,
 					"a": 1
 				},
-				"skyIntensity": 1,
+				"skyIntensity": 5,
 				"skyColor":
+				{
+					"r": 1,
+					"g": 0.58104425668716431,
+					"b": 0,
+					"a": 1
+				},
+				"moonScale": 0,
+				"moonlightIntensity": 0.10000000149011612,
+				"moonlightColor":
 				{
 					"r": 0,
 					"g": 0,
 					"b": 0,
 					"a": 1
 				},
-				"moonScale": 0,
-				"moonlightIntensity": 0,
-				"moonlightColor":
-				{
-					"r": 0.51764702796936035,
-					"g": 0.60000002384185791,
-					"b": 0.86666697263717651,
-					"a": 1
-				},
-				"starsIntensity": 8,
+				"starsIntensity": 1,
 				"starsColor":
 				{
 					"r": 0.74901998043060303,
@@ -56,14 +56,14 @@
 				"closeThunderVolume": 1,
 				"distantThunderVolume": 0,
 				"windVolume": 0.64999997615814209,
-				"clearFogDensity": 0.004999999888241291,
-				"cloudyFogDensity": 0.004999999888241291,
-				"clearFogHeightFalloff": 0.0099999997764825821,
-				"cloudyFogHeightFalloff": 0.0099999997764825821,
+				"clearFogDensity": 0.10000000149011612,
+				"cloudyFogDensity": 0.25,
+				"clearFogHeightFalloff": 0.15000000596046448,
+				"cloudyFogHeightFalloff": 0.039999999105930328,
 				"fogColor":
 				{
-					"r": 0,
-					"g": 0,
+					"r": 1,
+					"g": 0.47735393047332764,
 					"b": 0,
 					"a": 1
 				}

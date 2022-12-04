@@ -9,9 +9,11 @@ const NPCRegExp =
 export function addMineMatcher(gameState) {
     //The reason I'm making this it's own custom matcher is because I need the interact event to be debounced to hopefully increase performance in some capacity.
     //This version of interaction is more simplistic to it's official counterpart, given that the extra code is bloat.
+
     Omegga.addMatcher(
         //Pattern
         (_line, logMatch)=>{
+          // Be aware that container properties exist only as a hack to force javascript to referencing the variables instead of creating local variables.
           if(!gameState.gameLoop.state) return;
           
           if(!logMatch) return;
@@ -21,10 +23,11 @@ export function addMineMatcher(gameState) {
           if(generator !== 'LogBrickadia') return;
 
           const match = data.match(interactRegExp)
+          
 
           if(match) {
-            if(Date.now() - gameState.playersData[match.groups.name].lastInteractCall < 150) return;
-            gameState.playersData[match.groups.name].lastInteractCall = Date.now()
+            if(Date.now() - gameState.playersData.container[match.groups.name].lastInteractCall < 150) return;
+            gameState.playersData.container[match.groups.name].lastInteractCall = Date.now()
             if(match.groups.message) return; //Mining in this gamemode is the only operation that shouldn't use messages.
             
 
@@ -71,8 +74,8 @@ export function addNPCMatcher(gameState) {
           const matchNPC = match.groups.message.match(NPCRegExp)
           if(!matchNPC) return;
           
-          if(Date.now() - gameState.playersData[match.groups.name].lastInteractCall < 1000) return;
-          gameState.playersData[match.groups.name].lastInteractCall = Date.now()
+          if(Date.now() - gameState.playersData.container[match.groups.name].lastInteractCall < 1000) return;
+          gameState.playersData.container[match.groups.name].lastInteractCall = Date.now()
 
 
 

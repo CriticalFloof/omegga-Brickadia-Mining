@@ -1,6 +1,7 @@
 {
     "tools":{
-
+        "Basic_Pickaxe":"0",
+        "Basic_Hand_Drill":"10"
     },
     "placeables":{
         

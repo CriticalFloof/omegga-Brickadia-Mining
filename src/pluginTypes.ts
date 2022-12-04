@@ -54,6 +54,10 @@ export interface PlayerData {
     UIData:string[],
     UIPage:number,
     contextNPC:string,
+    questInfo: QuestData
+}
+
+interface QuestData {
     completedQuests:{ [index: string]: number},
     activeQuests:{ [index: string]: Array<Quest>},
     availableQuests:{ [index: string]: Array<Quest>}

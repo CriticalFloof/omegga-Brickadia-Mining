@@ -17,5 +17,24 @@
             "t":["I might have some quests for you. %quest_UI()%"]
         }
 
+    },
+    "Tool Smith":{
+        "greet":{
+            "t":["Hello, %player%, what would you like?", "%options%"],
+            "option1":"shop",
+            "option2":"upgrade"
+        },
+        "back":{
+            "t":["What else do you need?", "%options%"],
+            "option1":"shop",
+            "option2":"quests"
+        },
+        "shop":{
+            "t":["Have a look at my inventory. %shop_UI()%"]
+        },
+        "upgrade":{
+            "t":["How would you like to upgrade? %upgrade()%", "( Use /upgrade #amount/all )"]
+        }
+
     }
 }

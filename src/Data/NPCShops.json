@@ -12,5 +12,19 @@
                 "bCanSell":true
             }
         }
+    },
+    "Tool Smith":{
+        "buyPriceMultiplier":5,
+        "fee":0.20,
+        "inventory":{
+            "Basic_Pickaxe":{
+                "bCanBuy":true,
+                "bCanSell":true
+            },
+            "Basic_Hand_Drill":{
+                "bCanBuy":true,
+                "bCanSell":true
+            }
+        }
     }
 }

@@ -1,14 +1,17 @@
 import OmeggaPlugin, { OL, PS, PC, WriteSaveObject, Brick, OmeggaPlayer, IPlayerPositions, Vector } from 'omegga';
 import * as permissions from 'src/permissions';
 import * as initalization from 'src/gameInitalization';
-import * as playerSystem from 'src/playerSystem';
+import * as generationSystem from 'src/generationSystem';
 import * as utility from 'src/utility';
 import * as commands from 'src/commands';
 import * as NpcSystem from 'src/npcSystem';
+import Tools from "src/Data/Tools.json"
 
 import { createNoise3D, NoiseFunction3D } from 'simplex-noise';
-import { Players, Server, Surfaces } from 'src/pluginTypes';
+import { PlayerData, Players, Server, Surfaces } from 'src/pluginTypes';
 import { addMineMatcher, addNPCMatcher } from 'src/matchers/debounceInteract';
+import * as playerSystem from 'src/playerSystem';
+import { generateQuests } from 'src/questSystem';
 
 
 type Config = any;
@@ -27,6 +30,16 @@ let PlayersData:Players = {};
 let gameLoop = {state:false};
 let loadedNoiseFunctions:{[index:string]: NoiseFunction3D} = {}
 let autoStoreInterval:number;
+let questInterval:number;
+
+//gamestate for matchers to reference
+let gameState = {
+  gameLoop: gameLoop,
+  serverData: {container: ServerData},
+  surfacesData: {container: SurfacesData},
+  playersData: {container: PlayersData}
+}
+
 
 
 
@@ -41,46 +54,124 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     this.store = store;
   }
   /* 
-  We need a way to load bricks into the world based off inputs from players
-
-  ALL data is stored internally within the plugin without need for brickadia or omegga
-
-  To prevent data from being excessively large, objects contain a reference to what they are, instead of all being instances of a class.
-
-
+  I recognize the fact that this entire project's code is far from the best it could be.
+  I plan on redesigning most of the code if this project works out.
   */
   async init() {
     Omegga.broadcast(`<color="33bbff"><size="16">></></> Brickadia Mining Initalizating...`);
-    //Setting up Matchers
-    
+
+    if(!bInitalizedMatchers) {
+      addMineMatcher(gameState);
+      addNPCMatcher(gameState);
+      bInitalizedMatchers = true;
+    }
     Omegga.broadcast(`<color="33bbff"><size="16">></></> Brickadia Mining`);
     Omegga.broadcast(`<color="33bbff"><size="16">></></> version ${VERSION}`);
 
-    Omegga.on('join', (player:OmeggaPlayer) => {
-      if(!gameLoop.state) return;
-      if(PlayersData[player.name] === undefined){
-        console.info('New player detected. Generating player template...')
-        PlayersData[player.name] = initalization.initalizePlayer(player.name)
-        console.info(`Player ${player.name}'s data has been stored at ' PlayersData[${player.name}] '`)
+    //For server restarts
+    console.log('Server start!')
+    Omegga.on('start', async ()=>{
+      if(this.config['auto-start']) {
+        Omegga.broadcast(`<color="33bbff"><size="16">></></> Starting Brickadia Mining...`);
+        console.info("Starting Brickadia Mining...")
+  
+        //First start checking
+        if(await this.store.get('Server') === undefined || this.config['clear-gamedata']){
+          console.info("First time start. Creating new server template...")
+          let BlankData = initalization.initalizeGame();
+          await this.store.set('Players',BlankData.Players);
+          await this.store.set('Server',BlankData.Server);
+          await this.store.set('Surfaces',BlankData.Surfaces);
+          
+        } else {
+          console.info("Game saveData Found.")
+          // The next 2 lines are temporary to force terrain regeneration onstart before I make a function that loads the saved surfaces.
+          let BlankData = initalization.initalizeGame();
+          await this.store.set('Surfaces',BlankData.Surfaces); 
+        }
+  
+        //Data version checking and Update migrations
+        if(!initalization.checkGameVersion(VERSION, await this.store.get('Server'))) {
+          console.info("Game Version is incompatible with savedata. Checking for Migration paths...")
+          //Function for migration checking and correction goes here. Until then version updates will potentially clear data (still better than crashing)
+          console.info("No Migration Paths found. Creating new server template...")
+          let BlankData = initalization.initalizeGame();
+          await this.store.set('Players',BlankData.Players);
+          await this.store.set('Server',BlankData.Server);
+          await this.store.set('Surfaces',BlankData.Surfaces);
+        } else {
+          console.info("Game saveData verified.")
+        }
+        //Initalization of live server variables.
+        PlayersData = await this.store.get('Players');
+        ServerData = await this.store.get('Server');
+        SurfacesData = await this.store.get('Surfaces');
+        console.info("Game saveData initalized.")
+  
+        //update gamestate
+        gameState.serverData.container = ServerData;
+        gameState.surfacesData.container = SurfacesData;
+        gameState.playersData.container = PlayersData;
+  
+        //Store Autosave Setup
+        autoStoreInterval = setInterval(async ()=>{
+          console.info("Saving Store Data...")
+          await this.store.set('Players',PlayersData);
+          await this.store.set('Server',ServerData);
+          await this.store.set('Surfaces',SurfacesData);
+          console.info("Store Data has been Autosaved!")
+        },60000*this.config['autosave-interval'])
+
+        questInterval = setInterval(async ()=>{
+          for (let i = 0; i < Object.keys(PlayersData).length; i++) {
+            if(PlayersData[Object.keys(PlayersData)[i]].focusedCommand === "quests"){
+              NpcSystem.clearUI(PlayersData[Object.keys(PlayersData)[i]])
+            }
+            PlayersData[Object.keys(PlayersData)[i]].questInfo.availableQuests = generateQuests(PlayersData[Object.keys(PlayersData)[i]]).questInfo.availableQuests
+          }
+          Omegga.broadcast('<color="33bbff"><size="16">></></> Quests have been refreshed!')
+          console.info("Quests refreshed.")
+        },60000*this.config['quest-interval'])
+  
+        //Noise function generation
+        console.info("Creating Noise Functions...")
+        const SurfacesKeys = Object.keys(SurfacesData)
+        for (let i = 0; i < SurfacesKeys.length; i++) {
+          const seed = SurfacesData[SurfacesKeys[i]].surfaceSeed
+          const surfaceNoise = createNoise3D(()=>{return seed});
+          loadedNoiseFunctions[SurfacesKeys[i]] = surfaceNoise
+        }
+        //Loading Map Procedure
+        Omegga.clearAllBricks()
+  
+        setTimeout(async ()=>{
+          Omegga.loadEnvironment('Brickadia-Mining-Plate');
+  
+          Omegga.loadBricks('BrickadiaMining-Structures/SpawnZoneNauvis', {quiet:false})
+          SurfacesData['Nauvis'].coordinateData = generationSystem.mineGround(ServerData, SurfacesData['Nauvis'],[0,0,0],[16,16,16],loadedNoiseFunctions,"rectangular",0,8,8,0)
+          const players = await Omegga.getPlayers();
+          players.forEach(player => {
+            Omegga.writeln(`Chat.Command /TP "${player.name}" ${-800+120*Math.random()} ${580+120*Math.random()} ${1_040_502} 0`);
+          });
+          //matchers initalization
+
+        },250)
+  
+  
+        //Gameloop set
+        gameLoop.state = true;
+  
+        Omegga.broadcast(`<color="33bbff"><size="16">></></> Brickadia Mining started!`);
+        
       }
     })
-
-    Omegga.on('leave', async (player:OmeggaPlayer) => {
-      if(!gameLoop.state) return;
-      NpcSystem.clearUI(PlayersData[player.name])
-      console.info("Forcing playerData Store.")
-      await this.store.set('Players',PlayersData);
-    })
-    //A fair amount of this could be wrapped and offloaded to another module, remember to do so.
-    Omegga.on('cmd:start-mining', async (speaker:string) => {
-      if(!permissions.getPermission(speaker,this.config['authorized-role'])) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> You dont have permission to use this command!`);return;};
-      if(gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> The game is already running!`);return;};
-
+    //For Plugin restarts
+    if(this.config['auto-start']) {
       Omegga.broadcast(`<color="33bbff"><size="16">></></> Starting Brickadia Mining...`);
       console.info("Starting Brickadia Mining...")
 
       //First start checking
-      if(await this.store.get('Server') === undefined || this.config['clear-gamedata'] === true){
+      if(await this.store.get('Server') === undefined || this.config['clear-gamedata']){
         console.info("First time start. Creating new server template...")
         let BlankData = initalization.initalizeGame();
         await this.store.set('Players',BlankData.Players);
@@ -89,6 +180,9 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
         
       } else {
         console.info("Game saveData Found.")
+        // The next 2 lines are temporary to force terrain regeneration onstart before I make a function that loads the saved surfaces.
+        let BlankData = initalization.initalizeGame();
+        await this.store.set('Surfaces',BlankData.Surfaces); 
       }
 
       //Data version checking and Update migrations
@@ -109,20 +203,10 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
       SurfacesData = await this.store.get('Surfaces');
       console.info("Game saveData initalized.")
 
-      //gamestate for matchers to reference
-      let gameState = {
-        gameLoop: gameLoop,
-        serverData: ServerData,
-        surfacesData: SurfacesData,
-        playersData: PlayersData
-      }
-
-      //matchers initalization
-      if(!bInitalizedMatchers) {
-        addMineMatcher(gameState);
-        addNPCMatcher(gameState);
-        bInitalizedMatchers = true;
-      }
+      //update gamestate
+      gameState.serverData.container = ServerData;
+      gameState.surfacesData.container = SurfacesData;
+      gameState.playersData.container = PlayersData;
 
       //Store Autosave Setup
       autoStoreInterval = setInterval(async ()=>{
@@ -132,6 +216,133 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
         await this.store.set('Surfaces',SurfacesData);
         console.info("Store Data has been Autosaved!")
       },60000*this.config['autosave-interval'])
+
+      questInterval = setInterval(async ()=>{
+        for (let i = 0; i < Object.keys(PlayersData).length; i++) {
+          if(PlayersData[Object.keys(PlayersData)[i]].focusedCommand === "quests"){
+            NpcSystem.clearUI(PlayersData[Object.keys(PlayersData)[i]])
+          }
+          PlayersData[Object.keys(PlayersData)[i]].questInfo.availableQuests = generateQuests(PlayersData[Object.keys(PlayersData)[i]]).questInfo.availableQuests
+        }
+        Omegga.broadcast('<color="33bbff"><size="16">></></> Quests have been refreshed!')
+        console.info("Quests refreshed.")
+      },60000*this.config['quest-interval'])
+
+      //Noise function generation
+      console.info("Creating Noise Functions...")
+      const SurfacesKeys = Object.keys(SurfacesData)
+      for (let i = 0; i < SurfacesKeys.length; i++) {
+        const seed = SurfacesData[SurfacesKeys[i]].surfaceSeed
+        const surfaceNoise = createNoise3D(()=>{return seed});
+        loadedNoiseFunctions[SurfacesKeys[i]] = surfaceNoise
+      }
+      //Loading Map Procedure
+      Omegga.clearAllBricks()
+
+      setTimeout(async ()=>{
+        Omegga.loadEnvironment('Brickadia-Mining-Plate');
+
+        Omegga.loadBricks('BrickadiaMining-Structures/SpawnZoneNauvis', {quiet:false})
+        SurfacesData['Nauvis'].coordinateData = generationSystem.mineGround(ServerData, SurfacesData['Nauvis'],[0,0,0],[16,16,16],loadedNoiseFunctions,"rectangular",0,8,8,0)
+        const players = await Omegga.getPlayers();
+        players.forEach(player => {
+          Omegga.writeln(`Chat.Command /TP "${player.name}" ${-800+120*Math.random()} ${580+120*Math.random()} ${1_040_502} 0`);
+        });
+      },250)
+
+
+      //Gameloop set
+      gameLoop.state = true;
+
+      Omegga.broadcast(`<color="33bbff"><size="16">></></> Brickadia Mining started!`);
+      
+    }
+
+    Omegga.on('join', (player:OmeggaPlayer) => {
+      if(!gameLoop.state) return;
+      if(PlayersData[player.name] === undefined){
+        console.info('New player detected. Generating player template...')
+        setTimeout(()=>{
+          PlayersData[player.name] = initalization.initalizePlayer(player.name)
+          console.info(`Player ${player.name}'s data has been stored at ' PlayersData[${player.name}] '`)
+          console.log(PlayersData[player.name])
+        }, 100)
+      }
+    })
+
+    Omegga.on('leave', async (player:OmeggaPlayer) => {
+      if(!gameLoop.state) return;
+      NpcSystem.clearUI(PlayersData[player.name])
+      console.info("Forcing playerData Store.")
+      await this.store.set('Players',PlayersData);
+    })
+
+    //For manual start
+    Omegga.on('cmd:start-mining', async (speaker: string) => {
+      if(!permissions.getPermission(speaker,this.config['authorized-role'])) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> You dont have permission to use this command!`);return;};
+      if(gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> The game is already running!`);return;};
+
+      Omegga.broadcast(`<color="33bbff"><size="16">></></> Starting Brickadia Mining...`);
+      console.info("Starting Brickadia Mining...")
+
+      //First start checking
+      if(await this.store.get('Server') === undefined || this.config['clear-gamedata']){
+        console.info("First time start. Creating new server template...")
+        let BlankData = initalization.initalizeGame();
+        await this.store.set('Players',BlankData.Players);
+        await this.store.set('Server',BlankData.Server);
+        await this.store.set('Surfaces',BlankData.Surfaces);
+        
+      } else {
+        console.info("Game saveData Found.")
+        // The next 2 lines are temporary to force terrain regeneration onstart before I make a function that loads the saved surfaces.
+        let BlankData = initalization.initalizeGame();
+        await this.store.set('Surfaces',BlankData.Surfaces); 
+      }
+
+      //Data version checking and Update migrations
+      if(!initalization.checkGameVersion(VERSION, await this.store.get('Server'))) {
+        console.info("Game Version is incompatible with savedata. Checking for Migration paths...")
+        //Function for migration checking and correction goes here. Until then version updates will potentially clear data (still better than crashing)
+        console.info("No Migration Paths found. Creating new server template...")
+        let BlankData = initalization.initalizeGame();
+        await this.store.set('Players',BlankData.Players);
+        await this.store.set('Server',BlankData.Server);
+        await this.store.set('Surfaces',BlankData.Surfaces);
+      } else {
+        console.info("Game saveData verified.")
+      }
+      //Initalization of live server variables.
+      PlayersData = await this.store.get('Players');
+      ServerData = await this.store.get('Server');
+      SurfacesData = await this.store.get('Surfaces');
+      console.info("Game saveData initalized.")
+
+      //update gamestate
+      gameState.serverData.container = ServerData;
+      gameState.surfacesData.container = SurfacesData;
+      gameState.playersData.container = PlayersData;
+
+      //Store Autosave Setup
+      autoStoreInterval = setInterval(async ()=>{
+        console.info("Saving Store Data...")
+        await this.store.set('Players',PlayersData);
+        await this.store.set('Server',ServerData);
+        await this.store.set('Surfaces',SurfacesData);
+        console.info("Store Data has been Autosaved!")
+      },60000*this.config['autosave-interval'])
+
+      //Quest Refresh
+      questInterval = setInterval(async ()=>{
+        for (let i = 0; i < Object.keys(PlayersData).length; i++) {
+          if(PlayersData[Object.keys(PlayersData)[i]].focusedCommand === "quests"){
+            NpcSystem.clearUI(PlayersData[Object.keys(PlayersData)[i]])
+          }
+          PlayersData[Object.keys(PlayersData)[i]].questInfo.availableQuests = generateQuests(PlayersData[Object.keys(PlayersData)[i]]).questInfo.availableQuests
+        }
+        Omegga.broadcast('<color="33bbff"><size="16">></></> Quests have been refreshed!')
+        console.info("Quests refreshed.")
+      },60000*this.config['quest-interval'])
 
       //Noise function generation
       console.info("Creating Noise Functions...")
@@ -145,35 +356,39 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
       Omegga.loadEnvironment('Brickadia-Mining-Plate');
       //Loading Map Procedure
       Omegga.clearAllBricks()
-      Omegga.loadBricks('BrickadiaMining-Structures/SpawnZoneNauvis', {quiet:false})
 
-      //Offset ground Positions
-      SurfacesData['Nauvis'].coordinateData = playerSystem.mineGround(ServerData, SurfacesData['Nauvis'],[0,0,0],[16,16,16],loadedNoiseFunctions,"rectangular",0,8,8,0)
+      setTimeout(async ()=>{
+        Omegga.loadBricks('BrickadiaMining-Structures/SpawnZoneNauvis', {quiet:false})
+        SurfacesData['Nauvis'].coordinateData = generationSystem.mineGround(ServerData, SurfacesData['Nauvis'],[0,0,0],[16,16,16],loadedNoiseFunctions,"rectangular",0,8,8,0)
+        const players = await Omegga.getPlayers();
+        players.forEach(player => {
+          Omegga.writeln(`Chat.Command /TP "${player.name}" ${-800+120*Math.random()} ${580+120*Math.random()} ${1_040_502} 0`);
+        });
+      },250)
 
-
-      //Teleporting relevant players
-      //Ideally the code would teleport people to a spawn brick without killing them, but since we dont know that information currently, we expicitly teleport them to the rough location of spawn.
-      const players = await Omegga.getPlayers();
-      players.forEach(player => {
-        Omegga.writeln(`Chat.Command /TP "${player.name}" ${-800+120*Math.random()} ${580+120*Math.random()} ${1_040_502} 0`);
-      });
-      
 
       //Gameloop set
       gameLoop.state = true;
 
       Omegga.broadcast(`<color="33bbff"><size="16">></></> Brickadia Mining started!`);
       
-    }),
+    })
     
-    Omegga.on('cmd:stop-mining', (speaker:string) => {
+    Omegga.on('cmd:stop-mining', async (speaker:string) => {
       if(!permissions.getPermission(speaker,"Admin")) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> You dont have permission to use this command!`);return;};
       if(!gameLoop.state) {Omegga.whisper(speaker, "The game isn't running!");return;};
 
       Omegga.broadcast(`Stopping Brickadia Mining...`);
       //gameloop clean up.
+
+      // Manual stopping forces a save.
+      await this.store.set('Players',PlayersData);
+      await this.store.set('Server',ServerData);
+      await this.store.set('Surfaces',SurfacesData);
+
       //Stopping autoStoreInterval
       clearInterval(autoStoreInterval);
+      clearInterval(questInterval);
       //Gameloop set
       gameLoop.state = false;
 
@@ -211,11 +426,17 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
       if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
       PlayersData[speaker] = commands.cancelQuest(PlayersData[speaker],parseInt(option))
     });
+    Omegga.on('cmd:equip', (speaker:string, itemName:string) => {
+      if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
+      const temporaryPlayerData: PlayerData = commands.equip(PlayersData[speaker],itemName)
+      PlayersData[speaker].hand = temporaryPlayerData.hand
+      console.log(PlayersData[speaker].hand)
+    });
 
     //CONTEXT COMMANDS SECTION
     Omegga.on('cmd:option', async (speaker:string, option:string) => {
       if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
-      PlayersData[speaker] = await commands.option(speaker,PlayersData[speaker], parseInt(option))
+      PlayersData[speaker] = await commands.option(PlayersData[speaker], parseInt(option))
     });
     Omegga.on('cmd:exit', (speaker:string, option:string) => {
       if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
@@ -223,12 +444,28 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     });
     Omegga.on('cmd:buy', (speaker:string, amount:string, ...itemName:string[]) => {
       if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
-      PlayersData[speaker] = commands.buy(speaker,PlayersData[speaker],itemName,amount)
+      const temporaryPlayerData: PlayerData = commands.buy(PlayersData[speaker],itemName,amount)
+      PlayersData[speaker].credits = temporaryPlayerData.credits
+      PlayersData[speaker].inventory = temporaryPlayerData.inventory
     });
     Omegga.on('cmd:sell', (speaker:string, amount:string, ...itemName:string[]) => {
       if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
-      PlayersData[speaker] = commands.sell(speaker,PlayersData[speaker],itemName,amount)
+      const temporaryPlayerData: PlayerData = commands.sell(PlayersData[speaker],itemName,amount)
+      PlayersData[speaker].credits = temporaryPlayerData.credits
+      PlayersData[speaker].inventory = temporaryPlayerData.inventory
     });
+    Omegga.on('cmd:upgrade', (speaker:string, amount:string) => {
+      if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
+      const temporaryPlayerData: PlayerData = commands.upgrade(PlayersData[speaker],amount)
+      PlayersData[speaker].credits = temporaryPlayerData.credits
+      PlayersData[speaker].inventory = temporaryPlayerData.inventory
+    });
+
+    Omegga.on('cmd:check', (speaker:string) => {
+      PlayersData[speaker].UIPage = 2
+      console.log(PlayersData[speaker])
+    });
+
 
     //DEV COMMANDS SECTION
 
@@ -238,35 +475,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
       PlayersData[speaker].bDevMode = !(PlayersData[speaker].bDevMode)
       Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> DevMode set to ${PlayersData[speaker].bDevMode}!`)
     });
-    Omegga.on('cmd:remote-sell', async (speaker:string, ...item:string[]) => {
-      if(!permissions.getPermission(speaker,this.config['authorized-role'])) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> You dont have permission to use this command!`);return;};
-      if(!gameLoop.state) {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This command cannot be used while the game isn't running!`); return;};
-      let playerData = PlayersData[speaker]
-      let newItem = item.join(" ")
-      newItem = newItem.toLowerCase()
-      //Selling all materials
-      if(newItem === "all"){
-        let sellTotal = 0;
-        const inventoryKeys = Object.keys(playerData.inventory)
-        for (let i = 0; i < inventoryKeys.length; i++) {
-          if(playerData.inventory[inventoryKeys[i]].type !== "ground" || playerData.inventory[inventoryKeys[i]].name === "Dirt") continue;
-          sellTotal += playerData.inventory[inventoryKeys[i]].amount * (ServerData.discoveredMineables.valuableMineables[playerData.inventory[inventoryKeys[i]].name].baseHealth/5 * ServerData.serverSellMultiplier);
-          playerData.inventory[inventoryKeys[i]] = undefined
-        }
-        playerData.credits += sellTotal
-        Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> Sold all Materials for ${sellTotal}!`)
-      } else {
-        
-        //Selling one material
-        if(playerData.inventory[newItem].type !== "ground" || playerData.inventory[newItem].name === "Dirt") {Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> This item cannot be sold.`);return;};
-        let sellTotal = 0;
-        sellTotal = playerData.inventory[newItem].amount * (ServerData.discoveredMineables.valuableMineables[playerData.inventory[newItem].name].baseHealth/5 * ServerData.serverSellMultiplier)
-        playerData.credits += sellTotal
-        playerData.inventory[newItem] = undefined
-        Omegga.whisper(speaker, `<color="33bbff"><size="16">></></> Sold ${newItem} for ${sellTotal}!`)
-      }
 
-    });
     Omegga.on('cmd:getgameposition', async (speaker:string) => {
       const playerPositions:IPlayerPositions = await Omegga.getAllPlayerPositions();
       playerPositions.forEach(IPP => {
@@ -278,78 +487,13 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     });
 
     Omegga.on('minebrick', ({ player, position }) => {
-      let t0 = Date.now();
-      console.log("-----\nStarting Interact Time Evaluation...")
-
-      const gamePosition = utility.absolutePositionToGamePosition(position);
-      let playerData = PlayersData[player.name];
-      //Clear the UI to prevent players from mining while still talking to an NPC.
-      NpcSystem.clearUI(playerData)
-
-      try {
-        //If cell's health is over 0, decrease it by pickaxe damage
-      
-        let selectedCell = SurfacesData['Nauvis'].coordinateData[`${gamePosition.chunkPosition[0]},${gamePosition.chunkPosition[1]},${gamePosition.chunkPosition[2]}`][`${gamePosition.relativePosition[0]},${gamePosition.relativePosition[1]},${gamePosition.relativePosition[2]}`]
-        selectedCell.health -= Math.round(playerData.inventory[playerData.hand].damage*playerData.inventory[playerData.hand].level)
-        if(selectedCell.health > 0 && !(PlayersData[player.name].bDevMode)){
-          if(ServerData.discoveredMineables.allMineables[selectedCell.name].class['valuable']){
-            Omegga.middlePrint(player.name,
-              `${selectedCell.name}: ${selectedCell.health}<br>Worth <color="33dd33">¢${(ServerData.discoveredMineables.valuableMineables[selectedCell.name].baseHealth/5 * ServerData.serverSellMultiplier)}</>`
-              )
-          } else {
-            Omegga.middlePrint(player.name,
-              `${selectedCell.name}: ${selectedCell.health}`
-              )
-          }
-        } else {
-
-          if (Date.now() - PlayersData[player.name].lastMineCall < 334) return;
-          PlayersData[player.name].lastMineCall = Date.now()
-
-          if(ServerData.discoveredMineables.allMineables[selectedCell.name].class['valuable']){
-            Omegga.middlePrint(player.name,
-              `Mined ${selectedCell.name}!<br>Worth <color="44ff44">¢${(ServerData.discoveredMineables.valuableMineables[selectedCell.name].baseHealth/5 * ServerData.serverSellMultiplier)}</>`
-              )
-          } else {
-            Omegga.middlePrint(player.name,
-              `Mined ${selectedCell.name}!`
-              )
-          }
-
-          const mineMethod = PlayersData[player.name].inventory[PlayersData[player.name].hand].mineMethod
-          const effectSize = PlayersData[player.name].inventory[PlayersData[player.name].hand].effectSize
-
-          SurfacesData['Nauvis'].coordinateData = playerSystem.mineGround(ServerData, SurfacesData['Nauvis'], gamePosition.chunkPosition, gamePosition.relativePosition, loadedNoiseFunctions,mineMethod,effectSize,effectSize,effectSize,effectSize)
-          if(ServerData.discoveredMineables.crustMineables[selectedCell.name] !== undefined){
-            if(playerData.inventory['Dirt'] === undefined) {
-              playerData.inventory['Dirt'] = {
-                name:'Dirt',
-                type:selectedCell.type,
-                amount:0
-              }
-            }
-            playerData.inventory["Dirt"].amount += 1
-          } else {
-            if(playerData.inventory[selectedCell.name] === undefined) {
-              playerData.inventory[selectedCell.name] = {
-                name:selectedCell.name,
-                type:selectedCell.type,
-                amount:0
-              }
-            }
-            playerData.inventory[selectedCell.name].amount += 1
-          }
-          
-        }
-      } catch (error) {
-        console.error("Tried to access a cell that doesn't exist, forcing mineGround().")
-        const mineMethod = PlayersData[player.name].inventory[PlayersData[player.name].hand].mineMethod
-        const effectSize = PlayersData[player.name].inventory[PlayersData[player.name].hand].effectSize
-        SurfacesData['Nauvis'].coordinateData = playerSystem.mineGround(ServerData, SurfacesData['Nauvis'], gamePosition.chunkPosition, gamePosition.relativePosition, loadedNoiseFunctions, mineMethod, effectSize,effectSize,effectSize,effectSize)
+      //Check if user is holding pickaxe
+      console.log(PlayersData[player.name])
+      if(Tools[PlayersData[player.name].hand] != undefined) {
+        playerSystem.damageGround(player.name, PlayersData, SurfacesData, ServerData, position, loadedNoiseFunctions)
+      } else {
+        Omegga.whisper(player.name, `You must equip a pickaxe to dig!`)
       }
-
-      let t1 = Date.now();
-      console.log(`Interaction function took ${t1-t0}ms to complete! \n -----`)
     })
 
     Omegga.on('triggerNpc', async ({ player, NPC }) => {
@@ -359,13 +503,16 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
 
     return { registeredCommands: [
       'start-mining','stop-mining',
-      'inventory','i','balance','bal',
-      'enable-dev-mode','remote-sell',
-      'option', 'exit', 'buy', 'sell',
+      'inventory','i','balance','bal','equip',
+      'enable-dev-mode',
+      'option', 'exit', 'buy', 'sell','upgrade',
       'viewquest','cancelquest'
     ] };
   }
   async stop() {
-    // Anything that needs to be cleaned up...
+    // Manual stopping forces a save.
+    await this.store.set('Players',PlayersData);
+    await this.store.set('Server',ServerData);
+    await this.store.set('Surfaces',SurfacesData);
   }
 }

@@ -12,6 +12,15 @@
       "description": "The rate which gameData is saved and stored (in minutes). useful for data loss prevention.",
       "default": 5,
       "type": "number"
+    },"quest-interval": {
+      "description": "The rate which available quests are refreshed (in minutes)",
+      "default": 30,
+      "type": "number"
+    },
+    "auto-start": {
+      "description": "Automatically starts the game on server/plugin-start",
+      "default": true,
+      "type": "boolean"
     },
     "clear-gamedata": {
       "description": "!!!DANGEROUS!!! Resets all gamedata upon restart, used for testing purposes. Enabling this option will make a lot of players angry in a live session.",

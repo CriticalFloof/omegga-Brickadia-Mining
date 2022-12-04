@@ -10,7 +10,7 @@ export function generateQuests(playerData:PlayerData):PlayerData {
     for (let i = 0; i < npcNames.length; i++) {
         let npcQuests = [];
         let oreObject = JSON.parse(JSON.stringify(Ores));
-        for (let j = 0; j < Math.floor(newPlayerData.completedQuests[npcNames[i]] / 10 + 1)*3 && j < 30; j++) {
+        for (let j = 0; j < Math.floor(newPlayerData.questInfo.completedQuests[npcNames[i]] / 10 + 1)*3 && j < 30; j++) {
 
             
             let quest:Quest = {
@@ -77,7 +77,7 @@ export function generateQuests(playerData:PlayerData):PlayerData {
             npcQuests.push(quest)
         }
         
-        newPlayerData.availableQuests[npcNames[i]] = npcQuests;
+        newPlayerData.questInfo.availableQuests[npcNames[i]] = npcQuests;
     }
     return newPlayerData;
 }
@@ -88,7 +88,7 @@ export async function activateQuest(playerData: PlayerData, option: number, pers
     switch (personal) {
         case 0: //Activated through personal means
             const page = newPlayerData.UIPage
-            const questArray = newPlayerData.availableQuests[newPlayerData.focusedNPC]
+            const questArray = newPlayerData.questInfo.availableQuests[newPlayerData.focusedNPC]
 
             //Filter the quests by tier
             for (let i = 0; i < questArray.length; i++) {
@@ -103,9 +103,9 @@ export async function activateQuest(playerData: PlayerData, option: number, pers
             }
             //Lock the quest, preventing the player from accepting another one personally from this NPC, until they complete or cancel it.
             
-            newPlayerData.lockedQuestsNPC[newPlayerData.focusedNPC] = filteredQuests[option-1]
-            if(newPlayerData.activeQuests[newPlayerData.focusedNPC] == undefined) newPlayerData.activeQuests[newPlayerData.focusedNPC] = []
-            newPlayerData.activeQuests[newPlayerData.focusedNPC].push(filteredQuests[option-1])
+            newPlayerData.questInfo.lockedQuestsNPC[newPlayerData.focusedNPC] = filteredQuests[option-1]
+            if(newPlayerData.questInfo.activeQuests[newPlayerData.focusedNPC] == undefined) newPlayerData.questInfo.activeQuests[newPlayerData.focusedNPC] = []
+            newPlayerData.questInfo.activeQuests[newPlayerData.focusedNPC].push(filteredQuests[option-1])
 
             Omegga.whisper(newPlayerData.name,`<color="ffff00">${newPlayerData.focusedNPC}</>: Stay safe out in the mines!`)
             const playerPositions = await Omegga.getAllPlayerPositions()
@@ -142,7 +142,7 @@ export function completeQuests(playerData: PlayerData):PlayerData {
     let newPlayerData: PlayerData = JSON.parse(JSON.stringify(playerData))
     const NpcKeys = Object.keys(NPCDialogue)
     for (let i = 0; i < NpcKeys.length; i++) {
-        const quests = newPlayerData.activeQuests[NpcKeys[i]];
+        const quests = newPlayerData.questInfo.activeQuests[NpcKeys[i]];
         if(quests == undefined) continue;
         for (let j = 0; j < quests.length; j++) {
             const quest = quests[j];
@@ -152,10 +152,10 @@ export function completeQuests(playerData: PlayerData):PlayerData {
                 case "Fetch":
                     if(newPlayerData.inventory[quest.objective.item] == undefined) continue;
                     if(newPlayerData.inventory[quest.objective.item].amount >= quest.objective.amount ) {
-                        if(newPlayerData.donePendingQuests[NpcKeys[i]] == undefined) newPlayerData.donePendingQuests[NpcKeys[i]] = []
-                        newPlayerData.donePendingQuests[NpcKeys[i]].push(newPlayerData.activeQuests[NpcKeys[i]][j])
-                        newPlayerData.activeQuests[NpcKeys[i]].splice(j,1)
-                        delete newPlayerData.lockedQuestsNPC[NpcKeys[i]]
+                        if(newPlayerData.questInfo.donePendingQuests[NpcKeys[i]] == undefined) newPlayerData.questInfo.donePendingQuests[NpcKeys[i]] = []
+                        newPlayerData.questInfo.donePendingQuests[NpcKeys[i]].push(newPlayerData.questInfo.activeQuests[NpcKeys[i]][j])
+                        newPlayerData.questInfo.activeQuests[NpcKeys[i]].splice(j,1)
+                        delete newPlayerData.questInfo.lockedQuestsNPC[NpcKeys[i]]
                     }
                     break;
             
@@ -175,13 +175,13 @@ export async function redeemPendingQuests(playerData: PlayerData):Promise<Player
 
     let newPlayerData: PlayerData = JSON.parse(JSON.stringify(playerData))
 
-    newPlayerData.credits += newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].reward;
-    newPlayerData.inventory[newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].objective.item].amount -= newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].objective.amount
-    if(newPlayerData.inventory[newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].objective.item].amount <= 0) delete newPlayerData.inventory[newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].objective.item]
+    newPlayerData.credits += newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].reward;
+    newPlayerData.inventory[newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].objective.item].amount -= newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].objective.amount
+    if(newPlayerData.inventory[newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].objective.item].amount <= 0) delete newPlayerData.inventory[newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].objective.item]
     
-    for (let i = 0; i < newPlayerData.availableQuests[newPlayerData.focusedNPC].length; i++) {
-        if(newPlayerData.availableQuests[newPlayerData.focusedNPC][i].objective.t == newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].objective.t && newPlayerData.availableQuests[newPlayerData.focusedNPC][i].reward == newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].reward) {
-            newPlayerData.availableQuests[newPlayerData.focusedNPC].splice(i,1)
+    for (let i = 0; i < newPlayerData.questInfo.availableQuests[newPlayerData.focusedNPC].length; i++) {
+        if(newPlayerData.questInfo.availableQuests[newPlayerData.focusedNPC][i].objective.t == newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].objective.t && newPlayerData.questInfo.availableQuests[newPlayerData.focusedNPC][i].reward == newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].reward) {
+            newPlayerData.questInfo.availableQuests[newPlayerData.focusedNPC].splice(i,1)
         }  
     }
 
@@ -195,14 +195,14 @@ export async function redeemPendingQuests(playerData: PlayerData):Promise<Player
         }
     }
 
-    Omegga.middlePrint(newPlayerData.name,`<size="24">Quest Complete!</> <br><br> <size="16">${newPlayerData.donePendingQuests[newPlayerData.focusedNPC][0].objective.t}</>`)
+    Omegga.middlePrint(newPlayerData.name,`<size="24">Quest Complete!</> <br><br> <size="16">${newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC][0].objective.t}</>`)
     Omegga.loadBricks('BrickadiaMining-Structures/QuestSounds/QuestCompleteSound', {quiet:true, offX:savedPlayerPosition[0]-1, offY:savedPlayerPosition[1]-1, offZ:savedPlayerPosition[2]-1,})
 
     setTimeout(()=>{
         Omegga.clearRegion({center:savedPlayerPosition, extent:[1,1,1]})
     },9000)
 
-    newPlayerData.donePendingQuests[newPlayerData.focusedNPC].shift()
+    newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC].shift()
 
     chooseSpecialReward(newPlayerData);
 

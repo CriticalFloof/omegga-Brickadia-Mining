@@ -7,23 +7,20 @@ import * as Quests from "./questSystem";
 
 export async function focusOnNPC(playerData:PlayerData, npcName):Promise<PlayerData> {
 
+    clearUI(playerData);
     let newPlayerData:PlayerData = JSON.parse(JSON.stringify(playerData))
+    
     newPlayerData = Quests.completeQuests(playerData)
     newPlayerData.contextNPC = 'greet'
     newPlayerData.focusedCommand = 'NPC';
-    switch (npcName) {
-        case 'Minerals Expert':
-            newPlayerData.focusedNPC = 'Minerals Expert'
-            break;
-    
-        default:
-            break;
-    }
+    newPlayerData.focusedNPC = npcName
+
     newPlayerData = await talkToNPC(newPlayerData, 0)
     return newPlayerData
 }
 
 export function defocusOnNPC(playerData:PlayerData):PlayerData {
+    clearUI(playerData);
     let newPlayerData:PlayerData = JSON.parse(JSON.stringify(playerData))
     newPlayerData.focusedNPC = '';
     newPlayerData.focusedCommand = '';
@@ -33,7 +30,12 @@ export function defocusOnNPC(playerData:PlayerData):PlayerData {
 
 export async function talkToNPC(playerData:PlayerData, option:number):Promise<PlayerData>{
     let newPlayerData:PlayerData = JSON.parse(JSON.stringify(playerData))
-    if(newPlayerData.donePendingQuests[newPlayerData.focusedNPC] != undefined && newPlayerData.donePendingQuests[newPlayerData.focusedNPC].length > 0) {
+    if(NPCDialogue[newPlayerData.focusedNPC] == undefined || NPCDialogue[newPlayerData.focusedNPC][newPlayerData.contextNPC] == undefined) {
+        Omegga.whisper(playerData.name, "Error: This npc doesn't exist or theres some dialogue that doesn't exist. Sorry!")
+        newPlayerData = defocusOnNPC(playerData);
+        return newPlayerData;
+    }
+    if(newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC] != undefined && newPlayerData.questInfo.donePendingQuests[newPlayerData.focusedNPC].length > 0) {
         newPlayerData = await Quests.redeemPendingQuests(playerData);
     }
     let texts:Array<string> = accessNPCDialogueTree(newPlayerData.focusedNPC,newPlayerData.contextNPC,`option${option}`)
@@ -43,22 +45,27 @@ export async function talkToNPC(playerData:PlayerData, option:number):Promise<Pl
         texts[i] = texts[i].replace('%notFound%', "%options%")
     }
     for (let i = 0; i < texts.length; i++) {
-        setTimeout(()=>{
-            if (texts[i].match(/%shop_UI\(\)%/) != undefined) {
-                texts[i] = texts[i].replace(/%shop_UI\(\)%/, '')
-                newPlayerData = triggerShopUI(newPlayerData, newPlayerData.focusedNPC, "1");
+        if (texts[i].match(/%shop_UI\(\)%/) != undefined) {
+            texts[i] = texts[i].replace(/%shop_UI\(\)%/, '')
+            newPlayerData = triggerShopUI(newPlayerData, newPlayerData.focusedNPC, "1");
+            newPlayerData.UIPage = 1
+        }
+        if (texts[i].match(/%quest_UI\(\)%/) != undefined) {
+            texts[i] = texts[i].replace(/%quest_UI\(\)%/, '')
+            if(newPlayerData.questInfo.lockedQuestsNPC[playerData.focusedNPC] != undefined) {
+                texts[i] = "Finish the quest you accepted from me before asking for more jobs."
+                newPlayerData.focusedCommand = ""
+            } else {
+                console.log(newPlayerData)
+                newPlayerData = triggerQuestUI(newPlayerData, newPlayerData.focusedNPC, "1");
                 newPlayerData.UIPage = 1
             }
-            if (texts[i].match(/%quest_UI\(\)%/) != undefined) {
-                texts[i] = texts[i].replace(/%quest_UI\(\)%/, '')
-                if(newPlayerData.lockedQuestsNPC[playerData.focusedNPC] != undefined) {
-                    texts[i] = "Finish the quest you accepted from me before asking for more jobs."
-                    newPlayerData.focusedCommand = ""
-                } else {
-                    newPlayerData = triggerQuestUI(newPlayerData, newPlayerData.focusedNPC, "1");
-                    newPlayerData.UIPage = 1
-                }
-            }
+        }
+        if (texts[i].match(/%upgrade\(\)%/) != undefined) {
+            texts[i] = texts[i].replace(/%upgrade\(\)%/, '')
+            newPlayerData.focusedCommand = "upgrade"
+        }
+        setTimeout(()=>{
             if(texts[i].match(/%options%/) != undefined) {
                 let txtArray = []
                 for(let j = 0; j < Object.keys(NPCDialogue[newPlayerData.focusedNPC][newPlayerData.contextNPC]).length; j++){
@@ -92,37 +99,39 @@ function accessNPCDialogueTree(npcName,location,option:string):Array<string>{
 //Quests
 
 export function triggerQuestUI(playerData:PlayerData, npcName:string, page:string):PlayerData {
+    let newPlayerData: PlayerData = JSON.parse(JSON.stringify(playerData))
     if(parseInt(page) == NaN) return playerData;
-    playerData.focusedCommand = "quests"
-    playerData.UIData = getQuestUIData(npcName, playerData);
+    newPlayerData.focusedCommand = "quests"
+    newPlayerData.UIData = getQuestUIData(npcName, newPlayerData);
 
     //Page constructor
     let UIpageArray = [] //Ideally the section of the quests could be pulled in using a formula, but since data pulled from the quest generator isn't always 3 per tier, we have to check for difficulty.
 
-    for(let i = 0; i < playerData.UIData.length; i++){
-        const match = playerData.UIData[i].match(/\[<color="ff4444">(?<difficulty>\d)<\/>\]/)
-        if(match.groups != undefined && match.groups.difficulty == page) {
-            UIpageArray.push(playerData.UIData[i])
+    for(let i = 0; i < newPlayerData.UIData.length; i++){
+        const match = newPlayerData.UIData[i].match(/\[<color="ff4444">(?<difficulty>\d)<\/>\]/)
+        if(match != undefined && match.groups != undefined && match.groups.difficulty == page) {
+            UIpageArray.push(newPlayerData.UIData[i])
         }
     }
-    let UIPage = `<size="12">Tier ${page} of ${Math.ceil(playerData.completedQuests[npcName]/3+1)}</> <br> ${UIpageArray.join(`<br>`)} <br> <size="12"><color="777777">/? quests</></>`
-    Omegga.middlePrint(playerData.name, UIPage)
-    playerData.focusedUI = setInterval(()=>{
+    if(UIpageArray.length == 0) UIpageArray = ['<color="777777">There are no quests at the moment!</>']
+    let UIPage = `<size="12">Tier ${page} of ${Math.ceil(newPlayerData.questInfo.completedQuests[npcName]/3+1)}</> <br> ${UIpageArray.join(`<br>`)} <br> <size="12"><color="777777">/? quests</></>`
+    Omegga.middlePrint(newPlayerData.name, UIPage)
+    newPlayerData.focusedUI = setInterval(()=>{
         try {
-            Omegga.middlePrint(playerData.name, UIPage)
+            Omegga.middlePrint(newPlayerData.name, UIPage)
         } catch (error) {
-            console.info(`Plugin Attempted to send middleText to ${playerData.name} but they couldn't be found. Ignoring...`)
+            console.info(`Plugin Attempted to send middleText to ${newPlayerData.name} but they couldn't be found. Ignoring...`)
         }
         
     },3000)
-    return playerData;
+    return newPlayerData;
 }
 
 function getQuestUIData(npcName: string, playerData: PlayerData): Array<string> {
     const newPlayerData:PlayerData = JSON.parse(JSON.stringify(playerData))
-    const npcQuests = newPlayerData.availableQuests[npcName]
+    const npcQuests = newPlayerData.questInfo.availableQuests[npcName]
     let questStringArray = []
-
+    if(npcQuests == undefined) return [];
     for(let i = 0; i < npcQuests.length; i++){
         const quest = npcQuests[i]
         
@@ -134,24 +143,26 @@ function getQuestUIData(npcName: string, playerData: PlayerData): Array<string> 
 
 //Shops
 export function triggerShopUI(playerData:PlayerData, npcName:string, page:string):PlayerData {
+    if(getShopUIData(npcName) == undefined) return playerData;
+    let newPlayerData: PlayerData = JSON.parse(JSON.stringify(playerData))
     if(parseInt(page) == NaN) return playerData;
     const pageIndex = parseInt(page)-1
-    playerData.focusedCommand = "shop"
-    playerData.UIData = getShopUIData(npcName);
+    newPlayerData.focusedCommand = "shop"
+    newPlayerData.UIData = getShopUIData(npcName);
 
     //Page constructor
-    let UIpageArray = playerData.UIData.slice(pageIndex*6,pageIndex*6+6)
-    let UIPage = `<size="12">Page ${page} of ${Math.ceil(playerData.UIData.length/6)}</> <br> ${UIpageArray.join(`<br>`)} <br> <size="12"><color="777777">/? shops</></>`
-    Omegga.middlePrint(playerData.name, UIPage)
-    playerData.focusedUI = setInterval(()=>{
+    let UIpageArray = newPlayerData.UIData.slice(pageIndex*6,pageIndex*6+6)
+    let UIPage = `<size="12">Page ${page} of ${Math.ceil(newPlayerData.UIData.length/6)}</> <br> ${UIpageArray.join(`<br>`)} <br> <size="12"><color="777777">/? shops</></>`
+    Omegga.middlePrint(newPlayerData.name, UIPage)
+    newPlayerData.focusedUI = setInterval(()=>{
         try {
-            Omegga.middlePrint(playerData.name, UIPage)
+            Omegga.middlePrint(newPlayerData.name, UIPage)
         } catch (error) {
-            console.info(`Plugin Attempted to send middleText to ${playerData.name} but they couldn't be found. Ignoring...`)
+            console.info(`Plugin Attempted to send middleText to ${newPlayerData.name} but they couldn't be found. Ignoring...`)
         }
         
     },3000)
-    return playerData;
+    return newPlayerData;
 }
 
 export function clearUI(playerData:PlayerData):void {
@@ -165,6 +176,7 @@ export function clearUI(playerData:PlayerData):void {
 
 function getShopUIData(npcName):Array<string> {
     const shop = NPCShops[npcName]
+    if(shop == undefined) return ["Shop appears to be empty, use /exit"];
     const shopItemKeys = Object.keys(shop.inventory)
     let shopItems = {}
     for (let i = 0; i < shopItemKeys.length; i++) {

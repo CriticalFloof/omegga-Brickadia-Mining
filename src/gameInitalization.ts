@@ -1,7 +1,7 @@
 import OmeggaPlugin from 'omegga';
 
 import * as coordinateSystem from 'src/coordinateSystem';
-import * as playerSystem from 'src/playerSystem';
+import * as generationSystem from 'src/generationSystem';
 import { FullDataStructure, PlayerData, Server } from './pluginTypes';
 import OresJSON from 'src/Data/Ores.json';
 import DirtJSON from 'src/Data/Dirt.json';
@@ -61,7 +61,6 @@ export function initalizeGame() {
     let players = Omegga.getPlayers()
     for (let i = 0; i < players.length; i++) {
         let playerData = initalizePlayer(players[i].name)
-        playerData = generateQuests(playerData)
         fullGameDataStructure.Players[players[i].name] = playerData
     }
     
@@ -70,26 +69,26 @@ export function initalizeGame() {
 
 
 export function initalizePlayer(player:string) {
-    
+    console.log(player)
     let playerObject = Omegga.getPlayer(player);
-
+    console.log(playerObject)
     let playerData:PlayerData = {
         name:playerObject.name,
         effects:[],
         health:100,
         credits:0,
         inventory: {
-            basicPickaxe:{
-                name:'Basic Pickaxe',
+            Basic_Pickaxe:{
+                name:'Basic_Pickaxe',
                 type:'toolPickaxe',
                 mineMethod:'rectangular',
                 damage:1,
                 effectSize:0,
                 level:1,
-                maxLevel:100
+                maxLevel:25
             }
         },
-        hand:"basicPickaxe",
+        hand:"Basic_Pickaxe",
         lastInteractCall:0,
         lastMineCall:0,
         bDevMode:false,
@@ -99,18 +98,22 @@ export function initalizePlayer(player:string) {
         UIData:[],
         UIPage:1,
         contextNPC:'',
-        completedQuests:{},
-        activeQuests:{},
-        availableQuests:{},
-        lockedQuestsNPC:{},
-        donePendingQuests:{}
+        questInfo:{
+            completedQuests:{},
+            activeQuests:{},
+            availableQuests:{},
+            lockedQuestsNPC:{},
+            donePendingQuests:{}
+        }
     }
 
     const npckeys = Object.keys(NPCS)
 
     npckeys.forEach((npc)=>{
-        playerData.completedQuests[npc] = 0;
+        playerData.questInfo.completedQuests[npc] = 0;
     })
+    
+    playerData = generateQuests(playerData)
 
     return playerData;
 }

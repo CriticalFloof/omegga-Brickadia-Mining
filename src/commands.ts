@@ -6,8 +6,9 @@ import Ores from "src/Data/Ores.json";
 import * as quest from "./questSystem";
 import NPCDialogue from "src/Data/NPCDialogue.json"
 import * as utility from "src/utility";
+import Tools from "src/Data/Tools.json";
 
-export function viewInventory(playerName:string, playerData:Players, page:number, filter:string):void{
+export function viewInventory(playerName:string, playersData:Players, page:number, filter:string):void{
     const player = Omegga.getPlayer(playerName);
     filter = filter.toLowerCase();
     switch (filter) {
@@ -23,7 +24,7 @@ export function viewInventory(playerName:string, playerData:Players, page:number
             Omegga.whisper(player,`<color="33bbff"><size="16">></></> The filter ''${filter}'' isn't an acceptable filter, try using these: (pickaxe, materials)`)
             return;
     }
-    const playerInventory = playerData[playerName].inventory;   const inventoryKeys = Object.keys(playerInventory); let filteredInventory = {};
+    const playerInventory = playersData[playerName].inventory;   const inventoryKeys = Object.keys(playerInventory); let filteredInventory = {};
     if(filter !== "all"){
         for (let i = 0; i < inventoryKeys.length; i++) if(playerInventory[inventoryKeys[i]] && playerInventory[inventoryKeys[i]].type === filter) filteredInventory[inventoryKeys[i]] = playerInventory[inventoryKeys[i]];
     } else {
@@ -37,12 +38,23 @@ export function viewInventory(playerName:string, playerData:Players, page:number
         
         if(playerInventory[filteredKeys[i]].type === "toolPickaxe") {
             let maxLevelTag = ""
+            let selectColorTag = ""
+            let selectColorTagEnd = ""
+            if(playerInventory[filteredKeys[i]] == playerInventory[playersData[playerName].hand]) {
+                selectColorTag = '<color="aaffaa">'
+                selectColorTagEnd = '</>'
+            }
             if(playerInventory[filteredKeys[i]].level >= playerInventory[filteredKeys[i]].maxLevel) maxLevelTag = '<color="ff0000"> MAXED!!</>'
-            Omegga.whisper(player,`<color="33bbff"><size="16">></></> ${playerInventory[filteredKeys[i]].name}: (Damage: ${playerInventory[filteredKeys[i]].damage}, Level: ${playerInventory[filteredKeys[i]].level}${maxLevelTag})`);
+            Omegga.whisper(player,`<color="33bbff"><size="16">></></> ${selectColorTag}${playerInventory[filteredKeys[i]].name}: (Damage: ${playerInventory[filteredKeys[i]].damage}, Level: ${playerInventory[filteredKeys[i]].level}${maxLevelTag})${selectColorTagEnd}`);
         }
         if(playerInventory[filteredKeys[i]].type === "ground") {
-            
-            Omegga.whisper(player,`<color="33bbff"><size="16">></></> ${playerInventory[filteredKeys[i]].name}: (Amount: ${playerInventory[filteredKeys[i]].amount})`);
+            let selectColorTag = ""
+            let selectColorTagEnd = ""
+            if(playerInventory[filteredKeys[i]] == playerInventory[playersData[playerName].hand]) {
+                selectColorTag = '<color="aaffaa">'
+                selectColorTagEnd = '</>'
+            }
+            Omegga.whisper(player,`<color="33bbff"><size="16">></></> ${selectColorTag}${playerInventory[filteredKeys[i]].name}: (Amount: ${playerInventory[filteredKeys[i]].amount})${selectColorTagEnd}`);
         }
     }
 }
@@ -51,7 +63,7 @@ export function viewBalance(playerName:string, playerData:PlayerData) {
     Omegga.whisper(playerName,`<color="33bbff"><size="16">></></> You currently have <color="44ff44">¢${(playerData.credits).toFixed(2)}</> in your balance!`)
 }
 
-export async function option(playerName:string, playerData:PlayerData, option:number):Promise<PlayerData> {
+export async function option(playerData:PlayerData, option:number):Promise<PlayerData> {
     if(option === NaN) {
         Omegga.whisper(playerData.name,`That option is not a number!`)
         return playerData
@@ -78,17 +90,22 @@ export async function option(playerName:string, playerData:PlayerData, option:nu
 
 export function exit(playerName:string, playerData:PlayerData):PlayerData {
     const context = playerData.focusedCommand
+    NPC.defocusOnNPC(playerData)
     switch (context) {
         case 'shop':
-            NPC.clearUI(playerData)
-            playerData.focusedNPC = ''
             Omegga.whisper(playerName, "Exiting Shop")
             break;
 
         case 'quests':
-            NPC.clearUI(playerData)
-            playerData.focusedNPC = ''
             Omegga.whisper(playerName, "Exiting Quests")
+            break;
+        
+        case 'upgrade':
+            Omegga.whisper(playerName, "Exiting Upgrades")
+            break;
+
+        case 'NPC':
+            Omegga.whisper(playerName, `<color="ffff00">${playerData.focusedNPC}</>: See you around!`)
             break;
     
         default:
@@ -98,7 +115,7 @@ export function exit(playerName:string, playerData:PlayerData):PlayerData {
 }
 
 //This is a nice example of a fat function, dont do what I did, lol
-export function buy(playerName:string, playerData:PlayerData, item:string[], amount:string = "1"):PlayerData {
+export function buy(playerData:PlayerData, item:string[], amount:string = "1"):PlayerData {
     const itemString = item.join(' ')
     let processedAmount = parseInt(amount)
     if(processedAmount == NaN || processedAmount <= 0) return playerData;
@@ -169,6 +186,7 @@ export function buy(playerName:string, playerData:PlayerData, item:string[], amo
                         break;
                 }
             }
+            
             const shopItemKeys = Object.keys(shopItems)
             let selectedItem: string;
             for (let i = 0; i < shopItemKeys.length; i++) {
@@ -178,7 +196,7 @@ export function buy(playerName:string, playerData:PlayerData, item:string[], amo
             }
 
             //Check if the requested item is on the current npc shop.
-            if(selectedItem == undefined) {Omegga.whisper(playerData.name, `Item ${item} doesn't exist!`); return playerData;}
+            if(selectedItem == undefined) {Omegga.whisper(playerData.name, `Item '${item}' doesn't exist!`); return playerData;}
             //Check if said item can be bought.
             if(shopItems[selectedItem].bCanBuy === false) {Omegga.whisper(playerData.name, `This item cannot be bought`); return playerData;}
 
@@ -195,16 +213,30 @@ export function buy(playerName:string, playerData:PlayerData, item:string[], amo
             let modifiedPrice = shopItems[selectedItem].price*processedAmount*shop.buyPriceMultiplier+(shopItems[selectedItem].price*processedAmount*shop.buyPriceMultiplier*shop.fee)
             if(playerData.credits < modifiedPrice) {Omegga.whisper(playerData.name, `You need ${modifiedPrice} to buy ${processedAmount} ${selectedItem}s!`); return playerData;}
             //After all of that, give the players items
-
-            if(playerData.inventory[selectedItem] == undefined) {
-                playerData = utility.createItemByName(playerData, selectedItem)
-                playerData.inventory[selectedItem].amount = processedAmount
-            } else {
-                playerData.inventory[selectedItem].amount += processedAmount;
+            let bCanStack = true;
+            for (let i = 0; i < Object.keys(PriceTable.tools).length; i++) {
+                if(selectedItem === Object.keys(PriceTable.tools)[i]) {
+                    bCanStack = false
+                }
             }
-            
-        
-            //Loop through price tables until a section with the right item is found, then set the price to that var
+
+             if(bCanStack) {
+                 if(playerData.inventory[selectedItem] == undefined) {
+                     playerData = utility.createItemByName(playerData, selectedItem)
+                     playerData.inventory[selectedItem].amount = processedAmount
+                 } else {
+                     playerData.inventory[selectedItem].amount += processedAmount;
+                 }
+             } else {
+                 if(playerData.inventory[selectedItem] == undefined) {
+                     playerData = utility.createItemByName(playerData, selectedItem)
+                     modifiedPrice = shopItems[selectedItem].price*processedAmount*shop.buyPriceMultiplier+(shopItems[selectedItem].price*shop.buyPriceMultiplier*shop.fee)
+                 } else {
+                     //reject purchase.
+                     Omegga.whisper(playerData.name, `You already own a ${selectedItem}!`)
+                     break;
+                 }
+             }
 
             //Take the players credits
             playerData.credits -= parseFloat(modifiedPrice.toFixed(2))
@@ -219,7 +251,7 @@ export function buy(playerName:string, playerData:PlayerData, item:string[], amo
 }
 
 //Code isn't very dry either
-export function sell(playerName:string, playerData:PlayerData, item:string[], amount:string = "1"):PlayerData {
+export function sell(playerData:PlayerData, item:string[], amount:string = "1"):PlayerData {
     const itemString = item.join(' ')
     let processedAmount = parseInt(amount)
     if(processedAmount == NaN || processedAmount <= 0) return playerData;;
@@ -340,11 +372,10 @@ export function viewQuests(playerData: PlayerData) {
     const NpcKeys = Object.keys(NPCDialogue)
     let orderedQuestArray = []
     for (let i = 0; i < NpcKeys.length; i++) {
-        const quests = newPlayerData.activeQuests[NpcKeys[i]];
+        const quests = newPlayerData.questInfo.activeQuests[NpcKeys[i]];
         if(quests == undefined) continue;
         for (let j = 0; j < quests.length; j++) {
             const quest = quests[j];
-            console.log(quest)
             if(quest == undefined) continue;
             orderedQuestArray.push(quest)
             Omegga.whisper(newPlayerData.name, `[<color="ff4444">${quest.difficulty}</>] ${quest.objective.t}, <color="44ff44">¢${quest.reward}</> reward from ${NpcKeys[i]}`)
@@ -365,7 +396,7 @@ export function cancelQuest(playerData: PlayerData, option: number):PlayerData {
     let orderedQuestArray = []
     const NpcKeys = Object.keys(NPCDialogue)
     for (let i = 0; i < NpcKeys.length; i++) {
-        const quests = newPlayerData.activeQuests[NpcKeys[i]];
+        const quests = newPlayerData.questInfo.activeQuests[NpcKeys[i]];
         if(quests == undefined) continue;
         for (let j = 0; j < quests.length; j++) {
             const quest = quests[j];
@@ -382,16 +413,64 @@ export function cancelQuest(playerData: PlayerData, option: number):PlayerData {
     }
     const questForDeletion:Quest = orderedQuestArray[option-1]
     for (let i = 0; i < NpcKeys.length; i++) {
-        const quests = newPlayerData.activeQuests[NpcKeys[i]];
+        const quests = newPlayerData.questInfo.activeQuests[NpcKeys[i]];
         if(quests == undefined) continue;
         for (let j = 0; j < quests.length; j++) {
             if(quests[j] == undefined) continue;
-            if(newPlayerData.activeQuests[NpcKeys[i]][j] == questForDeletion){
-                Omegga.whisper(playerData.name, `Cancelled quest ${newPlayerData.activeQuests[NpcKeys[i]][j].objective.t} for ${NpcKeys[i]}`)
-                newPlayerData.activeQuests[NpcKeys[i]].splice(j,1)
-                delete newPlayerData.lockedQuestsNPC[NpcKeys[i]]
+            if(newPlayerData.questInfo.activeQuests[NpcKeys[i]][j] == questForDeletion){
+                Omegga.whisper(playerData.name, `Cancelled quest ${newPlayerData.questInfo.activeQuests[NpcKeys[i]][j].objective.t} for ${NpcKeys[i]}`)
+                newPlayerData.questInfo.activeQuests[NpcKeys[i]].splice(j,1)
+                delete newPlayerData.questInfo.lockedQuestsNPC[NpcKeys[i]]
             }
         }
     }
     return newPlayerData;
+}
+
+export function equip(playerData:PlayerData, item:string) {
+    let newPlayerData: PlayerData = JSON.parse(JSON.stringify(playerData))
+    if (newPlayerData.inventory[item] != undefined) {
+        newPlayerData.hand = item
+    } else {
+        Omegga.whisper(playerData.name, `You can't equip ''${item}'' `)
+    }
+    
+
+    return newPlayerData
+}
+
+export function upgrade(playerData: PlayerData, amount: string = "1") {
+    let processedAmount = parseInt(amount)
+    if (amount.toLowerCase() === "all"){
+        processedAmount = 65535
+    }
+    if(processedAmount == NaN) return playerData;
+
+    let newPlayerData: PlayerData = JSON.parse(JSON.stringify(playerData))
+
+    if(Tools[newPlayerData.hand] == undefined){
+        Omegga.whisper(newPlayerData.name,`You can only upgrade tools`)
+        return playerData;
+    }
+    if(newPlayerData.focusedCommand !== "upgrade") {
+        Omegga.whisper(newPlayerData.name,'You cannot upgrade without talking to a tool smith!')
+        return playerData;
+    }
+    const initialPriceEquation = parseFloat(((10+PriceTable.tools[newPlayerData.hand]/5)*Math.pow(newPlayerData.inventory[playerData.hand].level,1.3)).toFixed(2))
+    if(newPlayerData.credits < initialPriceEquation) {
+        Omegga.whisper(newPlayerData.name,`You need ${initialPriceEquation} credits to upgrade!`)
+        return playerData;
+    } 
+    for(let i = 0; i < processedAmount; i++) {
+        const priceEquation = parseFloat(((10+PriceTable.tools[newPlayerData.hand]/5)*Math.pow(newPlayerData.inventory[playerData.hand].level,1.3)).toFixed(2))
+        newPlayerData.credits -= priceEquation
+        newPlayerData.inventory[playerData.hand].level++
+        if(newPlayerData.credits < priceEquation){
+            break;
+        }
+    }
+    Omegga.whisper(newPlayerData.name,`Your ${newPlayerData.hand} is now level ${newPlayerData.inventory[newPlayerData.hand].level}`)
+
+
+    return newPlayerData
 }

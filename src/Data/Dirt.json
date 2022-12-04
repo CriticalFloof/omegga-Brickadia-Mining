@@ -7,7 +7,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [45,40,10],
+            "color": [87, 58, 19],
             "components": {
                 
             }
@@ -21,7 +21,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [40,35,5],
+            "color": [113, 88, 17],
             "components": {
                 
             }
@@ -35,7 +35,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [60,50,20],
+            "color": [130, 102, 21],
             "components": {
                 
             }
@@ -49,7 +49,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [90,80,40],
+            "color": [154, 124, 40],
             "components": {
                 
             }
@@ -63,7 +63,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [130,80,30],
+            "color": [168, 140, 57],
             "components": {
                 
             }
@@ -77,7 +77,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [110,80,30],
+            "color": [182, 156, 81],
             "components": {
                 
             }
@@ -91,7 +91,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [100,75,25],
+            "color": [187, 165, 102],
             "components": {
                 
             }
@@ -105,7 +105,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [90,70,20],
+            "color": [199, 169, 135],
             "components": {
                 
             }
@@ -119,7 +119,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [130,140,130],
+            "color": [166, 136, 129],
             "components": {
                 
             }
@@ -133,7 +133,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [110,120,110],
+            "color": [145, 131, 131],
             "components": {
                 
             }
@@ -147,7 +147,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [100,110,105],
+            "color": [106, 101, 101],
             "components": {
                 
             }
@@ -161,7 +161,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [90,90,80],
+            "color": [91, 84, 84],
             "components": {
                 
             }
@@ -189,7 +189,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [110,120,110],
+            "color": [60, 58, 58],
             "components": {
                 
             }
@@ -203,7 +203,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [100,110,105],
+            "color": [61, 61, 52],
             "components": {
                 
             }
@@ -217,7 +217,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [90,90,80],
+            "color": [62, 60, 48],
             "components": {
                 
             }
@@ -231,7 +231,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [130,140,130],
+            "color": [44, 43, 37],
             "components": {
                 
             }
@@ -245,7 +245,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [110,120,110],
+            "color": [40, 39, 34],
             "components": {
                 
             }
@@ -259,7 +259,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [100,110,105],
+            "color": [37, 36, 32],
             "components": {
                 
             }
@@ -273,7 +273,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [90,90,80],
+            "color": [28, 28, 26],
             "components": {
                 
             }
@@ -287,7 +287,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [130,140,130],
+            "color": [17, 16, 16],
             "components": {
                 
             }
@@ -301,7 +301,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [110,120,110],
+            "color": [0,0,0],
             "components": {
                 
             }
@@ -313,9 +313,9 @@
         "name":"Hard Depths II",
         "baseHealth":25000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 3,
+            "color": [0,0,0],
             "components": {
                 
             }
@@ -327,9 +327,9 @@
         "name":"Seriously Hard Depths II",
         "baseHealth":30000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 3,
+            "color": [16, 14, 14],
             "components": {
                 
             }
@@ -341,9 +341,9 @@
         "name":"Molten Rock",
         "baseHealth":32768,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 4,
+            "color": [29, 19, 19],
             "components": {
                 
             }
@@ -355,9 +355,9 @@
         "name":"Dense Molten Rock",
         "baseHealth":35000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 4,
+            "color": [52, 19, 19],
             "components": {
                 
             }
@@ -369,9 +369,9 @@
         "name":"Hard Molten Rock",
         "baseHealth":40000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 4,
+            "color": [82, 13, 13],
             "components": {
                 
             }
@@ -383,9 +383,9 @@
         "name":"Seriously Hard Molten Rock",
         "baseHealth":45000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 4,
+            "color": [146, 39, 11],
             "components": {
                 
             }
@@ -397,9 +397,9 @@
         "name":"Upper Mantle",
         "baseHealth":50000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [204, 129, 12],
             "components": {
                 
             }
@@ -411,9 +411,9 @@
         "name":"Dense Upper Mantle",
         "baseHealth":55000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [236, 187, 19],
             "components": {
                 
             }
@@ -425,9 +425,9 @@
         "name":"Hard Upper Mantle",
         "baseHealth":60000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [247, 202, 40],
             "components": {
                 
             }
@@ -439,9 +439,9 @@
         "name":"Seriously Hard Upper Mantle",
         "baseHealth":65536,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 191, 65],
             "components": {
                 
             }
@@ -453,9 +453,9 @@
         "name":"Deep Mantle I",
         "baseHealth":70000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 186, 0],
             "components": {
                 
             }
@@ -467,9 +467,9 @@
         "name":"Dense Deep Mantle I",
         "baseHealth":80000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 186, 0],
             "components": {
                 
             }
@@ -481,9 +481,9 @@
         "name":"Hard Deep Mantle I",
         "baseHealth":90000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 186, 0],
             "components": {
                 
             }
@@ -495,9 +495,9 @@
         "name":"Seriously Hard Deep Mantle I",
         "baseHealth":100000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 186, 0],
             "components": {
                 
             }
@@ -509,9 +509,9 @@
         "name":"Deep Mantle II",
         "baseHealth":150000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 136, 0],
             "components": {
                 
             }
@@ -523,9 +523,9 @@
         "name":"Dense Deep Mantle II",
         "baseHealth":165000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 136, 0],
             "components": {
                 
             }
@@ -537,9 +537,9 @@
         "name":"Hard Deep Mantle II",
         "baseHealth":180000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 136, 0],
             "components": {
                 
             }
@@ -551,9 +551,9 @@
         "name":"Seriously Hard Deep Mantle II",
         "baseHealth":200000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 136, 0],
             "components": {
                 
             }
@@ -565,9 +565,9 @@
         "name":"Deep Mantle III",
         "baseHealth":250000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 75, 0],
             "components": {
                 
             }
@@ -579,9 +579,9 @@
         "name":"Dense Deep Mantle III",
         "baseHealth":275000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 75, 0],
             "components": {
                 
             }
@@ -593,9 +593,9 @@
         "name":"Hard Deep Mantle III",
         "baseHealth":300000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 75, 0],
             "components": {
                 
             }
@@ -607,65 +607,65 @@
         "name":"Seriously Hard Deep Mantle III",
         "baseHealth":325000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 5,
+            "color": [255, 75, 0],
             "components": {
                 
             }
         }
     },
-    "Nether":{
+    "Netherrack":{
         "type":"ground",
         "class":{"crust":true}, 
-        "name":"Nether",
+        "name":"Netherrack",
         "baseHealth":400000,
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [130,140,130],
+            "color": [164, 0, 36],
             "components": {
                 
             }
         }
     },
-    "Dense Nether":{
+    "Dense Netherrack":{
         "type":"ground",
         "class":{"crust":true}, 
-        "name":"Dense Nether",
+        "name":"Dense Netherrack",
         "baseHealth":450000,
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [110,120,110],
+            "color": [121, 13, 36],
             "components": {
                 
             }
         }
     },
-    "Hard Nether":{
+    "Hard Netherrack":{
         "type":"ground",
         "class":{"crust":true}, 
-        "name":"Hard Nether",
+        "name":"Hard Netherrack",
         "baseHealth":500000,
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [100,110,105],
+            "color": [97, 20, 36],
             "components": {
                 
             }
         }
     },
-    "Seriously Hard Nether":{
+    "Seriously Hard Netherrack":{
         "type":"ground",
         "class":{"crust":true}, 
-        "name":"Seriously Hard Nether",
+        "name":"Seriously Hard Netherrack",
         "baseHealth":600000,
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [90,90,80],
+            "color": [156, 22, 22],
             "components": {
                 
             }
@@ -677,9 +677,9 @@
         "name":"Outer Core I",
         "baseHealth":1000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [206, 0, 0],
             "components": {
                 
             }
@@ -691,9 +691,9 @@
         "name":"Dense Outer Core I",
         "baseHealth":1500000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [206, 0, 0],
             "components": {
                 
             }
@@ -705,9 +705,9 @@
         "name":"Hard Outer Core I",
         "baseHealth":2000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [206, 0, 0],
             "components": {
                 
             }
@@ -719,9 +719,9 @@
         "name":"Seriously Hard Outer Core I",
         "baseHealth":2500000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [206, 0, 0],
             "components": {
                 
             }
@@ -733,9 +733,9 @@
         "name":"Outer Core II",
         "baseHealth":3000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [255, 122, 29],
             "components": {
                 
             }
@@ -747,9 +747,9 @@
         "name":"Dense Outer Core II",
         "baseHealth":4000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [255, 122, 29],
             "components": {
                 
             }
@@ -761,9 +761,9 @@
         "name":"Hard Outer Core II",
         "baseHealth":5000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [255, 122, 29],
             "components": {
                 
             }
@@ -775,9 +775,9 @@
         "name":"Seriously Hard Outer Core II",
         "baseHealth":6000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 3,
+            "material_intensity": 6,
+            "color": [255, 122, 29],
             "components": {
                 
             }
@@ -789,9 +789,9 @@
         "name":"Outer Core III",
         "baseHealth":8000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 3,
+            "material_intensity": 8,
+            "color": [255, 163, 28],
             "components": {
                 
             }
@@ -803,9 +803,9 @@
         "name":"Dense Outer Core III",
         "baseHealth":10000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 3,
+            "material_intensity": 8,
+            "color": [255, 163, 28],
             "components": {
                 
             }
@@ -817,9 +817,9 @@
         "name":"Hard Outer Core III",
         "baseHealth":12000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 3,
+            "material_intensity": 8,
+            "color": [255, 163, 28],
             "components": {
                 
             }
@@ -831,9 +831,9 @@
         "name":"Seriously Hard Outer Core III",
         "baseHealth":15000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 3,
+            "material_intensity": 8,
+            "color": [255, 163, 28],
             "components": {
                 
             }
@@ -845,9 +845,9 @@
         "name":"Outer Core IV",
         "baseHealth":20000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 3,
+            "material_intensity": 9,
+            "color": [255, 254, 38],
             "components": {
                 
             }
@@ -859,9 +859,9 @@
         "name":"Dense Outer Core IV",
         "baseHealth":25000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 3,
+            "material_intensity": 9,
+            "color": [255, 254, 38],
             "components": {
                 
             }
@@ -873,9 +873,9 @@
         "name":"Hard Outer Core IV",
         "baseHealth":30000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 3,
+            "material_intensity": 9,
+            "color": [255, 254, 38],
             "components": {
                 
             }
@@ -887,9 +887,9 @@
         "name":"Seriously Hard Outer Core IV",
         "baseHealth":35000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 3,
+            "material_intensity": 9,
+            "color": [255, 254, 38],
             "components": {
                 
             }
@@ -901,9 +901,9 @@
         "name":"Crystalized Magma",
         "baseHealth":50000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 3,
+            "material_intensity": 3,
+            "color": [255, 0, 0],
             "components": {
                 
             }
@@ -915,9 +915,9 @@
         "name":"Dense Crystalized Magma",
         "baseHealth":60000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 3,
+            "material_intensity": 3,
+            "color": [255, 50, 50],
             "components": {
                 
             }
@@ -929,9 +929,9 @@
         "name":"Hard Crystalized Magma",
         "baseHealth":70000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 3,
+            "material_intensity": 3,
+            "color": [230, 46, 102],
             "components": {
                 
             }
@@ -943,9 +943,9 @@
         "name":"Seriously Hard Crystalized Magma",
         "baseHealth":80000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 3,
+            "material_intensity": 3,
+            "color": [133, 26, 59],
             "components": {
                 
             }
@@ -957,9 +957,9 @@
         "name":"Inner Core I",
         "baseHealth":100000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -971,9 +971,9 @@
         "name":"Dense Inner Core I",
         "baseHealth":125000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -985,9 +985,9 @@
         "name":"Hard Inner Core I",
         "baseHealth":150000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -999,9 +999,9 @@
         "name":"Seriously Hard Inner Core I",
         "baseHealth":175000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -1013,9 +1013,9 @@
         "name":"Inner Core II",
         "baseHealth":200000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 208, 0],
             "components": {
                 
             }
@@ -1027,9 +1027,9 @@
         "name":"Dense Inner Core II",
         "baseHealth":225000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 208, 0],
             "components": {
                 
             }
@@ -1041,9 +1041,9 @@
         "name":"Hard Inner Core II",
         "baseHealth":250000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 208, 0],
             "components": {
                 
             }
@@ -1055,9 +1055,9 @@
         "name":"Seriously Hard Inner Core II",
         "baseHealth":275000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 208, 0],
             "components": {
                 
             }
@@ -1069,9 +1069,9 @@
         "name":"Inner Core III",
         "baseHealth":300000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 63, 0],
             "components": {
                 
             }
@@ -1083,9 +1083,9 @@
         "name":"Dense Inner Core III",
         "baseHealth":350000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 63, 0],
             "components": {
                 
             }
@@ -1097,9 +1097,9 @@
         "name":"Hard Inner Core III",
         "baseHealth":400000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 63, 0],
             "components": {
                 
             }
@@ -1111,9 +1111,9 @@
         "name":"Seriously Hard Inner Core III",
         "baseHealth":450000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 63, 0],
             "components": {
                 
             }
@@ -1125,9 +1125,9 @@
         "name":"Inner Core IV",
         "baseHealth":500000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -1139,9 +1139,9 @@
         "name":"Dense Inner Core IV",
         "baseHealth":550000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -1153,9 +1153,9 @@
         "name":"Hard Inner Core IV",
         "baseHealth":600000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -1167,9 +1167,9 @@
         "name":"Seriously Hard Inner Core IV",
         "baseHealth":650000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 9,
+            "color": [255, 143, 0],
             "components": {
                 
             }
@@ -1181,9 +1181,9 @@
         "name":"Inner Core V",
         "baseHealth":700000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 2,
+            "material_intensity": 7,
+            "color": [255, 189, 0],
             "components": {
                 
             }
@@ -1195,9 +1195,9 @@
         "name":"Dense Inner Core V",
         "baseHealth":750000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 7,
+            "color": [255, 189, 0],
             "components": {
                 
             }
@@ -1209,9 +1209,9 @@
         "name":"Hard Inner Core V",
         "baseHealth":800000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 2,
+            "material_intensity": 7,
+            "color": [255, 189, 0],
             "components": {
                 
             }
@@ -1223,9 +1223,9 @@
         "name":"Seriously Hard Inner Core V",
         "baseHealth":900000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 2,
+            "material_intensity": 7,
+            "color": [255, 189, 0],
             "components": {
                 
             }
@@ -1239,7 +1239,7 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [130,140,130],
+            "color": [0, 0, 0],
             "components": {
                 
             }
@@ -1251,9 +1251,9 @@
         "name":"The Real End",
         "baseHealth":10000000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 2,
+            "material_intensity": 1,
+            "color": [0, 0, 0],
             "components": {
                 
             }
@@ -1267,21 +1267,21 @@
         "brickData":{
             "material_index": 0,
             "material_intensity": 0,
-            "color": [100,110,105],
+            "color": [66, 0, 123],
             "components": {
                 
             }
         }
     },
-    "What're you doing here? Turn back now!":{
+    "why are still here? Turn back now!":{
         "type":"ground",
         "class":{"crust":true}, 
-        "name":"What're you doing here? Turn back now!",
+        "name":"why are still here? Turn back now!",
         "baseHealth":100000000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [90,90,80],
+            "material_index": 4,
+            "material_intensity": 6,
+            "color": [202, 0, 98],
             "components": {
                 
             }
@@ -1293,9 +1293,9 @@
         "name":"Get out while you still can, you're going to break something!",
         "baseHealth":500000000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [130,140,130],
+            "material_index": 4,
+            "material_intensity": 6,
+            "color": [202, 0, 98],
             "components": {
                 
             }
@@ -1307,9 +1307,9 @@
         "name":"Uncaught ReferenceError: Layer is not defined",
         "baseHealth":1000000000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [110,120,110],
+            "material_index": 4,
+            "material_intensity": 9,
+            "color": [255, 0, 0],
             "components": {
                 
             }
@@ -1321,9 +1321,9 @@
         "name":"#n$*u4*t 1ef$#e^ce(rr#r! #a0#r #s n#T de{i(e]",
         "baseHealth":10000000000000,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [100,110,105],
+            "material_index": 4,
+            "material_intensity": 1,
+            "color": [63, 0, 0],
             "components": {
                 
             }
@@ -1335,9 +1335,9 @@
         "name":"01010100 01101000 01100101 00100000 01000101 01101110 01100100",
         "baseHealth": 79114321051153210511663,
         "brickData":{
-            "material_index": 0,
-            "material_intensity": 0,
-            "color": [0,0,0],
+            "material_index": 4,
+            "material_intensity": 6,
+            "color": [0, 128, 0],
             "components": {
                 
             }
