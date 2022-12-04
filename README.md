@@ -15,7 +15,7 @@ A fully custom game mode for Brickadia built with typescript using [omegga](http
 
 ## Install
 
-`omegga install gh:Critical Floof/Brickadia-Mining`
+`omegga install gh:CriticalFloof/Brickadia-Mining`
 
 ## Usage
 
