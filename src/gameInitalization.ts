@@ -13,7 +13,7 @@ import NPCS from 'src/Data/NPCDialogue.json';
  * Checks if the game's version matches with the data version
  */
 export function checkGameVersion(version:string, ServerData:Server) {
-    if(version === ServerData.version){
+    if(ServerData != undefined && version === ServerData.version){
         return true;
     };
     return false;
